@@ -19,4 +19,4 @@ This repository contains the source code and infrastructure for my serverless Cl
 * **Global Distribution:** Provisioned CloudFront CDN distribution connected to S3 website endpoint origin.
 * **Edge Caching:** Enabled global edge caching tailored for static S3 website assets.
 * **Transport Security:** Configured viewer protocol policy to redirect HTTP traffic to HTTPS (`d25gcsywe82wnw.cloudfront.net`).
-EOF
+
