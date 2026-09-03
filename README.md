@@ -15,8 +15,14 @@ This repository contains the source code and infrastructure for my serverless Cl
 * **Access Control:** Configured public access settings and applied an anonymous `s3:GetObject` JSON policy to permit global web traffic.
 * **Deployment Verification:** Successfully verified public HTTP website endpoint rendering.
 
-## Day 3: CloudFront Distribution & HTTPS Enforcement
+## Day 3: CloudFront Distribution & Basic Deployment
 * **Global Distribution:** Provisioned CloudFront CDN distribution connected to S3 website endpoint origin.
 * **Edge Caching:** Enabled global edge caching tailored for static S3 website assets.
 * **Transport Security:** Configured viewer protocol policy to redirect HTTP traffic to HTTPS (`d25gcsywe82wnw.cloudfront.net`).
+
+## Day 4: Custom Domain, TLS Certificate & OAC Security Lockdown
+* **Custom Domain Delegation:** Delegated DNS management for `kiran-cloud.com` from GoDaddy to an AWS Route 53 Hosted Zone via custom nameservers.
+* **TLS Certificate Provisioning:** Issued and validated a wildcard SSL/TLS certificate in AWS Certificate Manager (ACM `us-east-1`) using Route 53 CNAME DNS validation.
+* **S3 Origin Migration & OAC Lockdown:** Switched CloudFront origin from S3 Website Endpoint to REST API endpoint (`.s3.amazonaws.com`) to support Origin Access Control (OAC), re-enabling S3 "Block all public access".
+* **Edge Routing & Invalidation:** Configured `index.html` as the Default Root Object, created Route 53 Alias A-records pointing to CloudFront, and issued a global cache invalidation (`/*`) to verify custom domain HTTPS access.
 
