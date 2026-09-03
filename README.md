@@ -9,7 +9,7 @@ This repository contains the source code and infrastructure for my serverless Cl
 * **Dynamic Counter Placeholder:** Added a frontend `<span>` element (`#visitor-count`) prepared for downstream API Gateway and Lambda integration.
 * **Version Control:** Connected local workspace to remote GitHub repository for ongoing CI/CD tracking.
 
-### Day 2: AWS S3 Static Website Hosting
+## Day 2: AWS S3 Static Website Hosting
 * **Bucket Provisioning:** Provisioned S3 bucket `kiran-cloud-resume-site` in Tokyo (`ap-northeast-1`).
 * **Hosting Configuration:** Enabled S3 Static Website Hosting configured to serve `index.html`.
 * **Access Control:** Configured public access settings and applied an anonymous `s3:GetObject` JSON policy to permit global web traffic.
