@@ -34,3 +34,8 @@ This repository contains the source code and infrastructure for my serverless Cl
 * **Python Lambda Function:** Developed `GetVisitorCount` using Python 3.12 and Boto3 to atomically increment and retrieve the `visitor_count` attribute from DynamoDB.
 * **CORS & Response Serialization:** Integrated CORS headers (`Access-Control-Allow-Origin: *`) and a custom `DecimalEncoder` class to properly serialize DynamoDB numeric types into JSON.
 * **IAM Security Enforcement:** Applied an inline IAM policy adhering to the principle of least privilege, granting the Lambda execution role access exclusively to `dynamodb:UpdateItem` and `dynamodb:GetItem` operations on the target table.
+
+## Day 7: API Gateway & CORS Integration
+* **HTTP API Endpoint:** Provisioned an AWS API Gateway (HTTP API) named `cloud-resume-api` routing `GET /counter` directly to the `GetVisitorCount` Lambda function.
+* **CORS Configuration:** Enforced Cross-Origin Resource Sharing (CORS) rules restricting allowed origins to `https://kiran-cloud.com` with `GET` and `OPTIONS` method permissions.
+* **End-to-End Verification:** Validated public HTTP API execution via browser/cURL, confirming atomic increments in DynamoDB (`visitor_count: 2`).
