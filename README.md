@@ -30,3 +30,7 @@ This repository contains the source code and infrastructure for my serverless Cl
 * **Table Provisioning:** Created an on-demand DynamoDB table named `cloud-resume-stats` in `ap-northeast-1` with a String partition key (`id`).
 * **Item Initialisation:** Seeded the initial counter item (`id = "visitors"`) with a `visitor_count` numerical attribute set to `0`.
 
+## Day 6: Serverless Backend & IAM Least Privilege
+* **Python Lambda Function:** Developed `GetVisitorCount` using Python 3.12 and Boto3 to atomically increment and retrieve the `visitor_count` attribute from DynamoDB.
+* **CORS & Response Serialization:** Integrated CORS headers (`Access-Control-Allow-Origin: *`) and a custom `DecimalEncoder` class to properly serialize DynamoDB numeric types into JSON.
+* **IAM Security Enforcement:** Applied an inline IAM policy adhering to the principle of least privilege, granting the Lambda execution role access exclusively to `dynamodb:UpdateItem` and `dynamodb:GetItem` operations on the target table.
