@@ -26,3 +26,7 @@ This repository contains the source code and infrastructure for my serverless Cl
 * **S3 Origin Migration & OAC Lockdown:** Switched CloudFront origin from S3 Website Endpoint to REST API endpoint (`.s3.amazonaws.com`) to support Origin Access Control (OAC), re-enabling S3 "Block all public access".
 * **Edge Routing & Invalidation:** Configured `index.html` as the Default Root Object, created Route 53 Alias A-records pointing to CloudFront, and issued a global cache invalidation (`/*`) to verify custom domain HTTPS access.
 
+## Day 5: Database Setup (DynamoDB)
+* **Table Provisioning:** Created an on-demand DynamoDB table named `cloud-resume-stats` in `ap-northeast-1` with a String partition key (`id`).
+* **Item Initialisation:** Seeded the initial counter item (`id = "visitors"`) with a `visitor_count` numerical attribute set to `0`.
+
