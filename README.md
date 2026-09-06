@@ -45,3 +45,7 @@ This repository contains the source code and infrastructure for my serverless Cl
 * **DOM Dynamics & Error Handling:** Configured live DOM updates (`#visitor-count`) with graceful fallback error handling.
 * **Global Edge Invalidation:** Re-uploaded static assets to Amazon S3 and created a CloudFront cache invalidation (`/*`) to verify full-stack atomic updates (`visitor_count: 3`).
 
+## Day 9: Python Unit Testing & Test Automation
+* **Mocking Strategy:** Implemented `unittest.mock.patch` to isolate and mock the `boto3` DynamoDB table resource without calling live AWS services.
+* **Test Coverage:** Created unit tests in `pytest` covering successful atomic updates (`200 OK`) and exception handlings (`500 Internal Server Error`).
+* **Assertions:** Validated HTTP response structure, CORS header integrity, Decimal-to-JSON serialization, and proper Boto3 `update_item` parameters.
