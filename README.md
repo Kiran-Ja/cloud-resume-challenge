@@ -4,6 +4,39 @@ cat << 'EOF' > README.md
 ## Project Overview
 This repository contains the source code and infrastructure for my serverless Cloud Resume, deployed on AWS.
 
+## 🏗️ Architecture Diagram
+
+```mermaid
+graph TD
+    User([User / Browser])
+    
+    subgraph Route53_DNS [DNS & Routing]
+        R53[Amazon Route 53]
+    end
+
+    subgraph Frontend_Layer [Frontend Layer]
+        CF[Amazon CloudFront CDN]
+        S3[(Amazon S3 Static Bucket)]
+    end
+
+    subgraph Backend_Layer [Serverless Backend Layer]
+        APIGW[Amazon API Gateway HTTP API]
+        Lambda[AWS Lambda Python 3.12]
+        DDB[(Amazon DynamoDB Table)]
+    end
+
+    %% Flow connections
+    User -->|1. DNS Lookup| R53
+    User -->|2. HTTPS Request| CF
+    CF -->|3. Fetch Static Assets| S3
+    User -->|4. JavaScript fetch API Call| APIGW
+    APIGW -->|5. Trigger Proxy Integration| Lambda
+    Lambda -->|6. Atomic Increment ADD visitor_count| DDB
+    DDB -->|7. Return Updated Count| Lambda
+    Lambda -->|8. JSON Response + CORS Headers| APIGW
+    APIGW -->|9. HTTP 200 OK Response| User
+```
+
 ## Day 1: Local Setup & Frontend Baseline
 * **Local Environment:** Initialized local Git repository and project file structure (`index.html`, `styles.css`).
 * **Frontend Markup:** Drafted a clean, responsive single-page HTML resume showcasing technical skills, certifications, and project experience.
