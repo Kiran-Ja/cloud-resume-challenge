@@ -88,3 +88,10 @@ graph TD
 * **Monorepo Architecture:** Structured project into clear `/frontend` (HTML/CSS) and `/backend` (Python Lambda & Pytest suite) directories.
 * **Ignored Artifacts:** Configured `.gitignore` to exclude bytecode (`__pycache__`), test caches (`.pytest_cache`), and local environment configurations.
 * **Version Control:** Initialized Git, set default branch to `main`, and published the clean, tested repository to GitHub.
+
+### Day 11: Architecture Diagramming & Production Documentation
+* **Mermaid.js Integration:** Visualized the full serverless stack directly within GitHub Markdown using declarative Mermaid.js syntax.
+* **Component Mapping:** Defined distinct system subgraphs for DNS/Routing (Route 53), Frontend Edge Delivery (CloudFront, S3), and Serverless Backend Processing (API Gateway, Lambda, DynamoDB).
+* **Data Flow Tracing:** Documented explicit end-to-end request cycles, mapping DNS queries, static asset caching, API proxy integrations, and atomic DynamoDB write operations.
+* **Documentation Finalization:** Polished `README.md` to include local `pytest` execution instructions, directory structure breakdown, technology stack specifications, and full project history logs.
+
