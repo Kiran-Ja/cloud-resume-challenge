@@ -1,0 +1,9 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+
+# OS metadata
+.DS_Store
+Thumbs.db
