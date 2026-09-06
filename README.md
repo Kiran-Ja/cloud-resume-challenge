@@ -39,3 +39,9 @@ This repository contains the source code and infrastructure for my serverless Cl
 * **HTTP API Endpoint:** Provisioned an AWS API Gateway (HTTP API) named `cloud-resume-api` routing `GET /counter` directly to the `GetVisitorCount` Lambda function.
 * **CORS Configuration:** Enforced Cross-Origin Resource Sharing (CORS) rules restricting allowed origins to `https://kiran-cloud.com` with `GET` and `OPTIONS` method permissions.
 * **End-to-End Verification:** Validated public HTTP API execution via browser/cURL, confirming atomic increments in DynamoDB (`visitor_count: 2`).
+
+## Day 8: Frontend JavaScript Integration & Full-Stack Hookup
+* **Asynchronous Fetch Implementation:** Added an inline `async/await` JavaScript snippet to `index.html` targeting the API Gateway `/counter` endpoint.
+* **DOM Dynamics & Error Handling:** Configured live DOM updates (`#visitor-count`) with graceful fallback error handling.
+* **Global Edge Invalidation:** Re-uploaded static assets to Amazon S3 and created a CloudFront cache invalidation (`/*`) to verify full-stack atomic updates (`visitor_count: 3`).
+
