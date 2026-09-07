@@ -109,3 +109,9 @@ graph TD
 * **Modular Structure Init:** Established project directory tree (`/terraform/modules/s3_cloudfront`, `/terraform/modules/api_lambda_dynamo`) and initialized HCL configuration with pinned HashiCorp AWS provider (`~> 5.0`).
 * **State Infrastructure Provisioning:** Drafted and applied initial resource definitions to provision an encrypted, version-controlled S3 bucket (`crc-terraform-state-kiran-2026`) and a DynamoDB locking table (`crc-terraform-locks`).
 * **Backend State Migration:** Configured the S3 native backend block in `main.tf` and executed `terraform init` to seamlessly migrate local state to remote encrypted storage with state locking enabled.
+
+### Day 14: Serverless Backend Module Provisioning & IAM Debugging
+* **Schema & IAM Definition:** Declared `aws_dynamodb_table` resources matching the single-table schema and provisioned least-privilege IAM execution roles for Lambda operations.
+* **Lambda Packaging & Environment:** Automated Python script packaging via local zip archive data sources and injected explicit environment variables (`TABLE_NAME`) for dynamic resource targeting.
+* **API Gateway HTTP Stack:** Built an `aws_apigatewayv2_api` stack with explicit route integrations (`GET /count`), native CORS configuration, and attached `aws_lambda_permission` resource policies.
+* **Resource Adoption & IAM Remediation:** Imported existing AWS infrastructure into Terraform state using `terraform import` and re-aligned IAM policies to target the live table ARN (`cloud-resume-challenge`), resolving runtime `AccessDeniedException` blocks.
