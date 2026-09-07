@@ -100,3 +100,12 @@ graph TD
 * **CORS & Payload Audit:** Verified cross-origin requests directly from browser DevTools, confirming API Gateway HTTP API handles native header management seamlessly without edge-case blocks.
 * **Observability Check:** Inspected AWS CloudWatch log streams (`/aws/lambda/GetVisitorCount`) to confirm zero unhandled execution exceptions, smooth invocation durations, and verified operational health.
 * **Production Polish & Invalidation:** Updated UI metadata with final contact details and target role positioning, uploaded assets to S3, and invalidated CloudFront edge caches (`/*`) for immediate global sync.
+
+
+## Phase 2: Infrastructure as Code (Terraform Migration)
+
+### Day 13: Toolchain Setup, Remote State Provisioning & S3 Backend Migration
+* **Toolchain & Identity Verification:** Authenticated AWS CLI locally via IAM programmatic access keys in `ap-northeast-1` and verified identity using `aws sts get-caller-identity`.
+* **Modular Structure Init:** Established project directory tree (`/terraform/modules/s3_cloudfront`, `/terraform/modules/api_lambda_dynamo`) and initialized HCL configuration with pinned HashiCorp AWS provider (`~> 5.0`).
+* **State Infrastructure Provisioning:** Drafted and applied initial resource definitions to provision an encrypted, version-controlled S3 bucket (`crc-terraform-state-kiran-2026`) and a DynamoDB locking table (`crc-terraform-locks`).
+* **Backend State Migration:** Configured the S3 native backend block in `main.tf` and executed `terraform init` to seamlessly migrate local state to remote encrypted storage with state locking enabled.
