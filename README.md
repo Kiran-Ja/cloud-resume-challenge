@@ -115,3 +115,10 @@ graph TD
 * **Lambda Packaging & Environment:** Automated Python script packaging via local zip archive data sources and injected explicit environment variables (`TABLE_NAME`) for dynamic resource targeting.
 * **API Gateway HTTP Stack:** Built an `aws_apigatewayv2_api` stack with explicit route integrations (`GET /count`), native CORS configuration, and attached `aws_lambda_permission` resource policies.
 * **Resource Adoption & IAM Remediation:** Imported existing AWS infrastructure into Terraform state using `terraform import` and re-aligned IAM policies to target the live table ARN (`cloud-resume-challenge`), resolving runtime `AccessDeniedException` blocks.
+
+### Day 15: Frontend Module Provisioning, CloudFront OAC & GoDaddy DNS Integration
+* **S3 Hosting & Edge Security:** Declared private S3 storage (`crc-frontend-bucket-kiran-2026`), enforced strict public access blocks, and attached an `aws_s3_bucket_policy` granting read-only access exclusively to the CloudFront Origin Access Control (OAC) Service Principal.
+* **CloudFront Distribution & SSL:** Deployed `aws_cloudfront_distribution` with custom domain aliases (`kiran-cloud.com`, `www.kiran-cloud.com`) and bound an existing ACM SSL certificate (`us-east-1`) for TLS termination.
+* **External DNS Integration (GoDaddy):** Managed DNS records directly via GoDaddy instead of Route 53, configuring root domain routing and a `CNAME` record for `www.kiran-cloud.com` pointing to the CloudFront distribution domain.
+* **State Untangling & Import Remediation:** Resolved `CNAMEAlreadyExists` conflicts by importing the pre-existing CloudFront distribution (`E2CL68CZUEPMOW`) into Terraform state, eliminating duplicate deployment attempts.
+* **Edge Validation & Cache Debugging:** Diagnosed initial `403 Forbidden` errors by populating `index.html` via AWS CLI, and bypassed local DNS caching issues via `nslookup` and `curl --resolve` to verify end-to-end HTTPS delivery for both domain variants.
