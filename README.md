@@ -122,3 +122,15 @@ graph TD
 * **External DNS Integration (GoDaddy):** Managed DNS records directly via GoDaddy instead of Route 53, configuring root domain routing and a `CNAME` record for `www.kiran-cloud.com` pointing to the CloudFront distribution domain.
 * **State Untangling & Import Remediation:** Resolved `CNAMEAlreadyExists` conflicts by importing the pre-existing CloudFront distribution (`E2CL68CZUEPMOW`) into Terraform state, eliminating duplicate deployment attempts.
 * **Edge Validation & Cache Debugging:** Diagnosed initial `403 Forbidden` errors by populating `index.html` via AWS CLI, and bypassed local DNS caching issues via `nslookup` and `curl --resolve` to verify end-to-end HTTPS delivery for both domain variants.
+
+## Day 16: Infrastructure as Code (Terraform)
+- **IaC Framework**: Modularized AWS infrastructure using Terraform.
+- **Resources Managed**: API Gateway (HTTP API), AWS Lambda (Python runtime), DynamoDB table, ACM Certificates, and CloudFront integration.
+- **Troubleshooting & Fixes**: 
+  - Resolved initial website loading failure by syncing frontend assets directly from the S3 origin bucket (`crc-frontend-bucket-kiran-2026`).
+  - Corrected API endpoint mismatch in `index.html` from `/counter` to the Terraform-configured `GET /count` route key.
+  - Invalidated CloudFront cache (`E2CL68CZUEPMOW`) to propagate updated frontend assets globally.
+- **CLI Workflow**:
+  - `terraform init` to initialize AWS providers and modules.
+  - `terraform plan` for dry-run verification.
+  - `terraform apply` for automated infrastructure provisioning.
