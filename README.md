@@ -38,99 +38,93 @@ graph TD
 ```
 
 ## Day 1: Local Setup & Frontend Baseline
-* **Local Environment:** Initialized local Git repository and project file structure (`index.html`, `styles.css`).
-* **Frontend Markup:** Drafted a clean, responsive single-page HTML resume showcasing technical skills, certifications, and project experience.
-* **Dynamic Counter Placeholder:** Added a frontend `<span>` element (`#visitor-count`) prepared for downstream API Gateway and Lambda integration.
-* **Version Control:** Connected local workspace to remote GitHub repository for ongoing CI/CD tracking.
+* **Local Environment:** Set up project directory structure and initialized local Git version control.
+* **Frontend Markup:** Built a responsive single-page HTML resume showcasing technical skills, certifications, and experience.
+* **Dynamic Counter UI:** Designed the frontend counter component to display visitor statistics.
+* **Version Control:** Connected local workspace to a remote GitHub repository to track project changes.
 
 ## Day 2: AWS S3 Static Website Hosting
-* **Bucket Provisioning:** Provisioned S3 bucket `kiran-cloud-resume-site` in Tokyo (`ap-northeast-1`).
-* **Hosting Configuration:** Enabled S3 Static Website Hosting configured to serve `index.html`.
-* **Access Control:** Configured public access settings and applied an anonymous `s3:GetObject` JSON policy to permit global web traffic.
-* **Deployment Verification:** Successfully verified public HTTP website endpoint rendering.
+* **Bucket Provisioning:** Provisioned a dedicated S3 bucket in the Tokyo region (`ap-northeast-1`).
+* **Hosting Configuration:** Enabled S3 Static Website Hosting configured to serve the resume site.
+* **Access Control:** Configured bucket policies and permissions to allow public web access.
+* **Deployment Verification:** Successfully verified the public HTTP website endpoint in the browser.
 
 ## Day 3: CloudFront Distribution & HTTPS Enforcement
-* **Global Distribution:** Provisioned CloudFront CDN distribution connected to S3 website endpoint origin.
-* **Edge Caching:** Enabled global edge caching tailored for static S3 website assets.
-* **Transport Security:** Configured viewer protocol policy to redirect HTTP traffic to HTTPS (`d25gcsywe82wnw.cloudfront.net`).
+* **Global Distribution:** Provisioned a CloudFront CDN distribution connected to the S3 bucket origin.
+* **Edge Caching:** Enabled global edge caching to deliver static site assets with low latency.
+* **Transport Security:** Configured viewer protocol policies to automatically enforce HTTPS encryption across all web traffic.
 
 ## Day 4: Custom Domain, TLS Certificate & OAC Security Lockdown
-* **Custom Domain Delegation:** Delegated DNS management for `kiran-cloud.com` from GoDaddy to an AWS Route 53 Hosted Zone via custom nameservers.
-* **TLS Certificate Provisioning:** Issued and validated a wildcard SSL/TLS certificate in AWS Certificate Manager (ACM `us-east-1`) using Route 53 CNAME DNS validation.
-* **S3 Origin Migration & OAC Lockdown:** Switched CloudFront origin from S3 Website Endpoint to REST API endpoint (`.s3.amazonaws.com`) to support Origin Access Control (OAC), re-enabling S3 "Block all public access".
-* **Edge Routing & Invalidation:** Configured `index.html` as the Default Root Object, created Route 53 Alias A-records pointing to CloudFront, and issued a global cache invalidation (`/*`) to verify custom domain HTTPS access.
+* **Custom Domain Delegation:** Configured custom domain management (`kiran-cloud.com`) by pointing nameservers to an AWS Route 53 Hosted Zone.
+* **TLS Certificate Provisioning:** Issued and validated a wildcard SSL/TLS certificate via AWS Certificate Manager (ACM) using DNS validation.
+* **S3 Origin Migration & OAC Lockdown:** Secured the S3 bucket by restricting direct public access and configuring CloudFront Origin Access Control (OAC).
+* **Edge Routing & Invalidation:** Linked Route 53 Alias records to CloudFront and ran a cache invalidation to verify custom domain HTTPS access.
 
 ## Day 5: Database Setup (DynamoDB)
-* **Table Provisioning:** Created an on-demand DynamoDB table named `cloud-resume-stats` in `ap-northeast-1` with a String partition key (`id`).
-* **Item Initialisation:** Seeded the initial counter item (`id = "visitors"`) with a `visitor_count` numerical attribute set to `0`.
+* **Table Provisioning:** Created an on-demand DynamoDB table (`cloud-resume-stats`) with an `id` primary key.
+* **Item Initialization:** Seeded the initial database record with a `visitor_count` attribute set to `0`.
 
 ## Day 6: Serverless Backend & IAM Least Privilege
-* **Python Lambda Function:** Developed `GetVisitorCount` using Python 3.12 and Boto3 to atomically increment and retrieve the `visitor_count` attribute from DynamoDB.
-* **CORS & Response Serialization:** Integrated CORS headers (`Access-Control-Allow-Origin: *`) and a custom `DecimalEncoder` class to properly serialize DynamoDB numeric types into JSON.
-* **IAM Security Enforcement:** Applied an inline IAM policy adhering to the principle of least privilege, granting the Lambda execution role access exclusively to `dynamodb:UpdateItem` and `dynamodb:GetItem` operations on the target table.
+* **Python Lambda Function:** Developed a Python Lambda function using Boto3 to increment and retrieve the visitor count from DynamoDB.
+* **CORS & JSON Handling:** Configured response headers for CORS support and handled decimal data serialization for API compatibility.
+* **IAM Security Enforcement:** Created a least-privilege IAM policy granting Lambda execution permissions exclusively for the target DynamoDB table.
 
 ## Day 7: API Gateway & CORS Integration
-* **HTTP API Endpoint:** Provisioned an AWS API Gateway (HTTP API) named `cloud-resume-api` routing `GET /counter` directly to the `GetVisitorCount` Lambda function.
-* **CORS Configuration:** Enforced Cross-Origin Resource Sharing (CORS) rules restricting allowed origins to `https://kiran-cloud.com` with `GET` and `OPTIONS` method permissions.
-* **End-to-End Verification:** Validated public HTTP API execution via browser/cURL, confirming atomic increments in DynamoDB (`visitor_count: 2`).
+* **HTTP API Endpoint:** Created an AWS API Gateway (HTTP API) route to trigger the backend Lambda function.
+* **CORS Configuration:** Configured Cross-Origin Resource Sharing (CORS) rules to safely allow API requests from the frontend domain.
+* **End-to-End Verification:** Tested the public API endpoint via cURL and verified real-time visitor count updates in DynamoDB.
 
 ## Day 8: Frontend JavaScript Integration & Full-Stack Hookup
-* **Asynchronous Fetch Implementation:** Added an inline `async/await` JavaScript snippet to `index.html` targeting the API Gateway `/counter` endpoint.
-* **DOM Dynamics & Error Handling:** Configured live DOM updates (`#visitor-count`) with graceful fallback error handling.
-* **Global Edge Invalidation:** Re-uploaded static assets to Amazon S3 and created a CloudFront cache invalidation (`/*`) to verify full-stack atomic updates (`visitor_count: 3`).
+* **Asynchronous Fetch Implementation:** Added an `async/await` JavaScript function to `index.html` to fetch data from the API Gateway endpoint.
+* **DOM Dynamics & Error Handling:** Configured live DOM updates for the visitor counter element with fallback error handling.
+* **Global Edge Invalidation:** Uploaded updated static assets to S3 and cleared CloudFront cache to verify live full-stack updates.
 
 ## Day 9: Python Unit Testing & Test Automation
-* **Mocking Strategy:** Implemented `unittest.mock.patch` to isolate and mock the `boto3` DynamoDB table resource without calling live AWS services.
-* **Test Coverage:** Created unit tests in `pytest` covering successful atomic updates (`200 OK`) and exception handlings (`500 Internal Server Error`).
-* **Assertions:** Validated HTTP response structure, CORS header integrity, Decimal-to-JSON serialization, and proper Boto3 `update_item` parameters.
+* **Mocking Strategy:** Used `unittest.mock` to isolate the `boto3` DynamoDB resource and test Lambda logic without calling live AWS services.
+* **Test Coverage:** Created `pytest` test cases covering successful database updates (`200 OK`) and backend error handling (`500 Error`).
+* **Assertions:** Verified response structure, CORS headers, JSON serialization, and correct parameter formatting for database operations.
 
 ## Day 10: GitHub Source Control & Repository Structuring
-* **Monorepo Architecture:** Structured project into clear `/frontend` (HTML/CSS) and `/backend` (Python Lambda & Pytest suite) directories.
-* **Ignored Artifacts:** Configured `.gitignore` to exclude bytecode (`__pycache__`), test caches (`.pytest_cache`), and local environment configurations.
-* **Version Control:** Initialized Git, set default branch to `main`, and published the clean, tested repository to GitHub.
+* **Monorepo Architecture:** Structured the repository into `/frontend` (HTML/CSS) and `/backend` (Python Lambda & Pytest) directories.
+* **Ignored Artifacts:** Configured `.gitignore` to exclude bytecode (`__pycache__`), test caches (`.pytest_cache`), and local configs.
+* **Version Control:** Initialized Git, set the default branch to `main`, and published the organized repository to GitHub.
 
-### Day 11: Architecture Diagramming & Production Documentation
-* **Mermaid.js Integration:** Visualized the full serverless stack directly within GitHub Markdown using declarative Mermaid.js syntax.
-* **Component Mapping:** Defined distinct system subgraphs for DNS/Routing (Route 53), Frontend Edge Delivery (CloudFront, S3), and Serverless Backend Processing (API Gateway, Lambda, DynamoDB).
-* **Data Flow Tracing:** Documented explicit end-to-end request cycles, mapping DNS queries, static asset caching, API proxy integrations, and atomic DynamoDB write operations.
-* **Documentation Finalization:** Polished `README.md` to include local `pytest` execution instructions, directory structure breakdown, technology stack specifications, and full project history logs.
+## Day 11: Architecture Diagramming & Production Documentation
+* **Mermaid.js Integration:** Visualized the complete serverless architecture using declarative Mermaid.js syntax inside GitHub Markdown.
+* **Component Mapping:** Defined system components for DNS routing, frontend edge delivery, and serverless backend processing.
+* **Data Flow Tracing:** Documented the end-to-end request lifecycle from initial browser load to backend database updates.
+* **Documentation Finalization:** Updated `README.md` with testing steps, folder structure breakdowns, and technology stack specifications.
 
 ## Day 12: End-to-End Verification, CloudWatch Auditing & Final Production Polish
-* **Integration Verification:** Executed live E2E testing across CloudFront, API Gateway, Lambda, and DynamoDB; confirmed clean 200 OK responses and accurate payload rendering.
-* **CORS & Payload Audit:** Verified cross-origin requests directly from browser DevTools, confirming API Gateway HTTP API handles native header management seamlessly without edge-case blocks.
-* **Observability Check:** Inspected AWS CloudWatch log streams (`/aws/lambda/GetVisitorCount`) to confirm zero unhandled execution exceptions, smooth invocation durations, and verified operational health.
-* **Production Polish & Invalidation:** Updated UI metadata with final contact details and target role positioning, uploaded assets to S3, and invalidated CloudFront edge caches (`/*`) for immediate global sync.
+* **Integration Verification:** Executed live end-to-end testing across all stack layers, confirming successful 200 OK HTTP responses.
+* **CORS & Payload Audit:** Checked browser DevTools network calls to confirm API Gateway handles cross-origin headers without edge-case errors.
+* **Observability Check:** Inspected AWS CloudWatch Lambda log streams to verify clean function execution, minimal latency, and zero runtime errors.
+* **Production Polish & Invalidation:** Refined UI metadata, deployed final assets to S3, and issued a CloudFront cache invalidation to sync changes globally.
 
 
 ## Phase 2: Infrastructure as Code (Terraform Migration)
 
-### Day 13: Toolchain Setup, Remote State Provisioning & S3 Backend Migration
-* **Toolchain & Identity Verification:** Authenticated AWS CLI locally via IAM programmatic access keys in `ap-northeast-1` and verified identity using `aws sts get-caller-identity`.
-* **Modular Structure Init:** Established project directory tree (`/terraform/modules/s3_cloudfront`, `/terraform/modules/api_lambda_dynamo`) and initialized HCL configuration with pinned HashiCorp AWS provider (`~> 5.0`).
-* **State Infrastructure Provisioning:** Drafted and applied initial resource definitions to provision an encrypted, version-controlled S3 bucket (`crc-terraform-state-kiran-2026`) and a DynamoDB locking table (`crc-terraform-locks`).
-* **Backend State Migration:** Configured the S3 native backend block in `main.tf` and executed `terraform init` to seamlessly migrate local state to remote encrypted storage with state locking enabled.
+## Day 13: Toolchain Setup, Remote State Provisioning & S3 Backend Migration
+* **Toolchain & Identity Verification:** Configured AWS CLI access in `ap-northeast-1` and verified programmatic credentials using `aws sts get-caller-identity`.
+* **Modular Structure Init:** Created the `/terraform` directory with dedicated module folders and configured provider versions.
+* **State Infrastructure Provisioning:** Created an encrypted S3 bucket for remote state storage and a DynamoDB table for state locking.
+* **Backend State Migration:** Configured the remote S3 backend in Terraform and executed `terraform init` to migrate state off the local machine.
 
-### Day 14: Serverless Backend Module Provisioning & IAM Debugging
-* **Schema & IAM Definition:** Declared `aws_dynamodb_table` resources matching the single-table schema and provisioned least-privilege IAM execution roles for Lambda operations.
-* **Lambda Packaging & Environment:** Automated Python script packaging via local zip archive data sources and injected explicit environment variables (`TABLE_NAME`) for dynamic resource targeting.
-* **API Gateway HTTP Stack:** Built an `aws_apigatewayv2_api` stack with explicit route integrations (`GET /count`), native CORS configuration, and attached `aws_lambda_permission` resource policies.
-* **Resource Adoption & IAM Remediation:** Imported existing AWS infrastructure into Terraform state using `terraform import` and re-aligned IAM policies to target the live table ARN (`cloud-resume-challenge`), resolving runtime `AccessDeniedException` blocks.
+## Day 14: Serverless Backend Module Provisioning & IAM Debugging
+* **Schema & IAM Definition:** Defined the DynamoDB table in Terraform and created least-privilege IAM execution roles for Lambda.
+* **Lambda Packaging & Environment:** Automated Python code packaging into deployment zip archives and configured environment variables for dynamic table targeting.
+* **API Gateway HTTP Stack:** Provisioned API Gateway HTTP routes (`GET /count`), configured CORS settings, and granted Lambda invoke permissions.
+* **Resource Adoption & IAM Remediation:** Imported existing AWS resources into Terraform state and fixed IAM policy ARNs to resolve runtime permission errors.
 
-### Day 15: Frontend Module Provisioning, CloudFront OAC & GoDaddy DNS Integration
-* **S3 Hosting & Edge Security:** Declared private S3 storage (`crc-frontend-bucket-kiran-2026`), enforced strict public access blocks, and attached an `aws_s3_bucket_policy` granting read-only access exclusively to the CloudFront Origin Access Control (OAC) Service Principal.
-* **CloudFront Distribution & SSL:** Deployed `aws_cloudfront_distribution` with custom domain aliases (`kiran-cloud.com`, `www.kiran-cloud.com`) and bound an existing ACM SSL certificate (`us-east-1`) for TLS termination.
-* **External DNS Integration (GoDaddy):** Managed DNS records directly via GoDaddy instead of Route 53, configuring root domain routing and a `CNAME` record for `www.kiran-cloud.com` pointing to the CloudFront distribution domain.
-* **State Untangling & Import Remediation:** Resolved `CNAMEAlreadyExists` conflicts by importing the pre-existing CloudFront distribution (`E2CL68CZUEPMOW`) into Terraform state, eliminating duplicate deployment attempts.
-* **Edge Validation & Cache Debugging:** Diagnosed initial `403 Forbidden` errors by populating `index.html` via AWS CLI, and bypassed local DNS caching issues via `nslookup` and `curl --resolve` to verify end-to-end HTTPS delivery for both domain variants.
+## Day 15: Frontend Module Provisioning, CloudFront OAC & GoDaddy DNS Integration
+* **S3 Hosting & Edge Security:** Provisioned private S3 bucket storage with CloudFront Origin Access Control (OAC) policies to restrict direct web access.
+* **CloudFront Distribution & SSL:** Deployed a CloudFront distribution linked to custom domain aliases and attached an ACM SSL certificate for HTTPS termination.
+* **External DNS Integration (GoDaddy):** Managed DNS records via GoDaddy, configuring root domain routing and a `CNAME` record pointing to CloudFront.
+* **State Untangling & Import Remediation:** Imported the existing CloudFront distribution into Terraform state to resolve domain conflict errors and align IaC tracking.
+* **Edge Validation & Cache Debugging:** Tested site access using `curl` and `nslookup` to verify end-to-end HTTPS delivery across domain variants.
 
 ## Day 16: Infrastructure as Code (Terraform)
-- **IaC Framework**: Modularized AWS infrastructure using Terraform.
-- **Resources Managed**: API Gateway (HTTP API), AWS Lambda (Python runtime), DynamoDB table, ACM Certificates, and CloudFront integration.
-- **Troubleshooting & Fixes**: 
-  - Resolved initial website loading failure by syncing frontend assets directly from the S3 origin bucket (`crc-frontend-bucket-kiran-2026`).
-  - Corrected API endpoint mismatch in `index.html` from `/counter` to the Terraform-configured `GET /count` route key.
-  - Invalidated CloudFront cache (`E2CL68CZUEPMOW`) to propagate updated frontend assets globally.
-- **CLI Workflow**:
-  - `terraform init` to initialize AWS providers and modules.
-  - `terraform plan` for dry-run verification.
-  - `terraform apply` for automated infrastructure provisioning.
+* **IaC Framework:** Fully modularized the AWS infrastructure stack using Terraform modules.
+* **Resources Managed:** Defined API Gateway, Lambda, DynamoDB, ACM Certificates, and CloudFront distributions in declarative HCL.
+* **Troubleshooting & Fixes:** Fixed S3 asset synchronization, corrected API endpoint routing (`/count`), and invalidated edge caches for live updates.
+* **CLI Workflow:** Standardized deployment using `terraform init`, `terraform plan`, and `terraform apply` for automated provisioning.
